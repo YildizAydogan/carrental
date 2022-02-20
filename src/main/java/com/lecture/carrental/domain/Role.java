@@ -1,6 +1,7 @@
 package com.lecture.carrental.domain;
 
 
+
 import com.lecture.carrental.domain.enumeration.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +18,6 @@ import javax.persistence.*;
 @Table(name = "roles")
 public class Role {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -30,8 +30,4 @@ public class Role {
     public String toString() {
         return "" + name + '}';
     }
-
-
-
-
 }

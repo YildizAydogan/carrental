@@ -7,7 +7,6 @@ import com.lecture.carrental.security.service.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -20,9 +19,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.net.PasswordAuthentication;
-
-
 @Configuration
 @EnableWebSecurity
 @AllArgsConstructor
@@ -30,43 +26,47 @@ import java.net.PasswordAuthentication;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsServiceImpl userDetailsService;
+
     private final AuthEntryPointJwt authEntryPointJwt;
 
     @Bean
-    public AuthTokenFilter authenticationJwtTokenFilter(){
-      return new AuthTokenFilter();
-
+    public AuthTokenFilter authenticationJwtTokenFilter() {
+        return new AuthTokenFilter();
     }
 
-    public PasswordEncoder passwordEncoder(){
-
+    @Bean
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-
+    @Bean
     @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception { //kimlik dogrulama icin dogruysa true yanlıssa false donuyor
+    public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-       http.csrf().and().cors().disable().exceptionHandling().authenticationEntryPoint(authEntryPointJwt).and()
-               .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)   .and()
-               .authorizeRequests().antMatchers("/car-rental/api/user/**")
-               .permitAll()
-               .anyRequest().authenticated();
+        http.csrf().and().cors().disable().exceptionHandling().authenticationEntryPoint(authEntryPointJwt).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .authorizeRequests().antMatchers("/car-rental/api/user/**")
+                .permitAll()
+                .anyRequest().authenticated();
 
-     http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.csrf().and().cors().disable().exceptionHandling().authenticationEntryPoint(authEntryPointJwt).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .antMatcher("/car-rental/api/register").antMatcher("/car-rental/api/login");
 
-
-
+        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
+
     @Override
-    public void configure(WebSecurity web) throws Exception {   //her seferinde bu son iki methoda gelip ekleme yapacagiz bu car, visitors sonradan yazilip doldurulacak
-      web.ignoring().antMatchers("/car/visitor");
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers();
     }
 }

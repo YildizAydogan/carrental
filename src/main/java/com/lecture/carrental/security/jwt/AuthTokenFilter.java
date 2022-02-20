@@ -1,5 +1,6 @@
 package com.lecture.carrental.security.jwt;
 
+
 import com.lecture.carrental.domain.User;
 import com.lecture.carrental.repository.UserRepository;
 import com.lecture.carrental.security.service.UserDetailsServiceImpl;
@@ -16,25 +17,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
-
 public class AuthTokenFilter extends OncePerRequestFilter {
-
-       @Autowired
-       private JwtUtils jwtUtils;
-
-
-       @Autowired
-       private UserDetailsServiceImpl userDetailsService;
-
-       @Autowired
-       private UserRepository userRepository;
-
-
-
+    @Autowired
+    private JwtUtils jwtUtils;
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
+    @Autowired
+    private UserRepository userRepository;
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         try {
             String jwt = parseJwt(request);
             if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
@@ -50,22 +42,13 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         }catch (Exception e){
             logger.error("Cannot set user authentication: {}", e);
         }
-
         filterChain.doFilter(request, response);
     }
-
-
-
-    private String parseJwt(HttpServletRequest request){
-        String headerAuth=request.getHeader("Authorization");
-
-
-        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer")){
+    private String parseJwt(HttpServletRequest request) {
+        String headerAuth = request.getHeader("Authorization");
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")){
             return headerAuth.substring(7);
         }
         return null;
-
-
-
     }
 }

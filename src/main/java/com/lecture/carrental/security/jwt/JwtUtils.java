@@ -1,24 +1,19 @@
 package com.lecture.carrental.security.jwt;
+
 import com.lecture.carrental.security.service.UserDetailsImpl;
 import io.jsonwebtoken.*;
-import org.springframework.security.core.Authentication;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-
 @Component
 public class JwtUtils {
 
-
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
-
-
-
 
     @Value("${backendapi.app.jwtSecret}")
     private String jwtSecret;
@@ -26,9 +21,10 @@ public class JwtUtils {
     @Value("${backendapi.app.jwtExpirationMs}")
     private long jwtExpirationMs;
 
-
     public String generateJwtToken(Authentication authentication) {
+
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
         return Jwts.builder()
                 .setSubject("" + (userDetails.getId()))
                 .setIssuedAt(new Date())
@@ -37,14 +33,9 @@ public class JwtUtils {
                 .compact();
     }
 
-
-
     public Long getIdFromJwtToken(String token) {
         return Long.parseLong(Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject());
     }
-
-
-
 
     public boolean validateJwtToken(String authToken) {
         try {
@@ -66,10 +57,9 @@ public class JwtUtils {
         catch (IllegalArgumentException e) {
             logger.error("JWT claims string is empty: {}", e.getMessage());
         }
-//token gecerli mi diye kontrol mu ettik
+
         return false;
     }
-
 
 
 
