@@ -1,6 +1,4 @@
 package com.lecture.carrental.service;
-
-
 import com.lecture.carrental.domain.Role;
 import com.lecture.carrental.domain.User;
 import com.lecture.carrental.domain.enumeration.UserRole;
@@ -14,7 +12,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -22,10 +19,16 @@ import java.util.Set;
 @AllArgsConstructor
 @Service
 public class UserService {
-
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final static String USER_NOT_FOUND_MSG = "user with id %d not found";
+
+
+    public UserDTO findById(Long id) throws ResourceNotFoundException {
+        User user = userRepository.findById(id)
+                .orElseThrow(()-> new ResourceNotFoundException(String.format(USER_NOT_FOUND_MSG, id)));
+    }
 
     public void register(User user) throws BadRequestException {
 
@@ -38,15 +41,12 @@ public class UserService {
 
         Set<Role> roles = new HashSet<>();
         Role customerRole = roleRepository.findByName(UserRole.ROLE_CUSTOMER)
-                .orElseThrow(() -> new ResourceNotFoundException("Error: Role is not found."));
+        .orElseThrow(() -> new ResourceNotFoundException("Error: Role is not found."));
 
         roles.add(customerRole);
 
         user.setRoles(roles);
-        userRepository.save(user);
-    }
-
-
+        userRepository.save(user);                        }
 
     public void login(String email, String password) throws AuthException {
         try {
@@ -56,8 +56,7 @@ public class UserService {
                 throw new AuthException("invalid credentials");
 
         }catch (Exception e){
-            throw new AuthException("invalid credentials");
-        }
+            throw new AuthException("invalid credentials");}
     }
 }
 

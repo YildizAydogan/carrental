@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-
 import java.util.Date;
 
 @Component
@@ -34,7 +33,8 @@ public class JwtUtils {
     }
 
     public Long getIdFromJwtToken(String token) {
-        return Long.parseLong(Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject());
+        return Long.parseLong(Jwts.parser().setSigningKey(jwtSecret)
+                .parseClaimsJws(token).getBody().getSubject());
     }
 
     public boolean validateJwtToken(String authToken) {
@@ -60,9 +60,4 @@ public class JwtUtils {
 
         return false;
     }
-
-
-
-
-
 }

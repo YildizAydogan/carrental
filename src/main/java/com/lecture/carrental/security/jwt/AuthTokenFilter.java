@@ -25,7 +25,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Autowired
     private UserRepository userRepository;
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+                                    FilterChain filterChain)
             throws ServletException, IOException {
         try {
             String jwt = parseJwt(request);
@@ -34,8 +35,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 request.setAttribute("id", id);
                 Optional<User> user = userRepository.findById(id);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(user.get().getEmail());
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userDetails, null,
+                                userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
