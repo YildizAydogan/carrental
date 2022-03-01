@@ -48,7 +48,7 @@ public class FileDBController {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/download/{id}")
     public ResponseEntity<byte[]> getFile(@PathVariable String id) {
         FileDB fileDB = fileDBService.getFileById(id);
 
